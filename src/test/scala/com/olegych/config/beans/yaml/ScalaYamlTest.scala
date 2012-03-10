@@ -1,13 +1,9 @@
-package com.olegych.config.beans
+package com.olegych.config.beans.yaml
 
 import org.specs2.mutable.Specification
 
-/**
- */
-class ConfigTest extends Specification {
-  val config = new Config
-
-  import config._
+class ScalaYamlTest extends Specification {
+  val yaml = new ScalaYaml
 
   def check[T: Manifest](t: T) = {yaml.represent(t).pp; yaml.load(yaml.dump(t).pp) should_== t}
 
@@ -30,15 +26,14 @@ class ConfigTest extends Specification {
   }
 }
 
-case class B(var a: List[A] = Nil) {
+case class B(a: List[A] = Nil) {
   def this() = this(Nil)
 }
 
-case class C(var a: Option[A] = None) {
+case class C(a: Option[A] = None) {
   def this() = this(None)
 }
 
-case class A(var a: Int = 5, var b: List[Int] = 1 :: Nil) {
-  //case class A(var a: Int = 5, var b: Int = 1) {
+case class A(a: Int = 5, b: List[Int] = 1 :: Nil) {
   def this() = this(7)
 }
