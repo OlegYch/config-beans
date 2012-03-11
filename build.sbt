@@ -8,5 +8,10 @@ resolvers += "Typesafe Snapshots" at "http://repo.typesafe.com/typesafe/snapshot
 
 libraryDependencies ++= Seq(
   "org.yaml" % "snakeyaml" % "1.10"
-  ,"org.specs2" %% "specs2" % "1.9-SNAPSHOT" % "test"
+  , "org.slf4j" % "slf4j-api" % "1.6.4"
+  , "com.google.guava" % "guava" % "11.0.1"
+  , "com.jsuereth" %% "scala-arm" % "1.2"
+  , "javax.transaction" % "jta" % "1.1" % "provided"
+  , "ch.qos.logback" % "logback-classic" % "1.0.0" % "test"
+  , "org.specs2" %% "specs2" % "1.9-SNAPSHOT" % "test"
 )

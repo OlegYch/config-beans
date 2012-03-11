@@ -1,6 +1,7 @@
 package com.olegych.config.beans.yaml
 
 import org.specs2.mutable.Specification
+import java.io.StringReader
 
 class ScalaYamlTest extends Specification {
   val yaml = new ScalaYaml
@@ -22,6 +23,12 @@ class ScalaYamlTest extends Specification {
     }
     "dump none" in {
       check(C())
+    }
+    "construct " in {
+      yaml.construct[A](yaml.represent(A()).pp).pp should_== A()
+    }
+    "compose" in {
+      yaml.construct[A](yaml.compose(new StringReader(yaml.dump(A()).pp))).pp should_== A()
     }
   }
 }

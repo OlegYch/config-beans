@@ -14,5 +14,5 @@ trait Config[T] {
 
   def value: T
 
-  def value_=(t: T)
+  def value_=(t: T): T
 }

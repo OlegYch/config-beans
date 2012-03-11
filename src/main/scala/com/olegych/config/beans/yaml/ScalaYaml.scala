@@ -6,6 +6,10 @@ import org.yaml.snakeyaml.{DumperOptions, Yaml}
 import org.yaml.snakeyaml.representer.{Represent, Representer}
 import org.yaml.snakeyaml.introspector.{BeanAccess, Property}
 import collection.JavaConverters._
+import org.yaml.snakeyaml.composer.Composer
+import org.yaml.snakeyaml.serializer.Serializer
+import org.yaml.snakeyaml.emitter.Emitter
+import org.yaml.snakeyaml.error.YAMLException
 
 /**
  */
@@ -19,10 +23,12 @@ class ScalaYaml extends Yaml {
           case sn: SequenceNode => def constructedSeq = constructSequence(sn).asScala
           if (node.getType == classOf[List[_]]) {
             constructedSeq.toList
-          } else if (node.getType == classOf[Option[_]]) {
-            constructedSeq.headOption
           } else {
-            default
+            if (node.getType == classOf[Option[_]]) {
+              constructedSeq.headOption
+            } else {
+              default
+            }
           }
           case _ => default
         }
@@ -67,4 +73,22 @@ class ScalaYaml extends Yaml {
   }
 
   setBeanAccess(BeanAccess.FIELD)
+
+  def construct[T: Manifest](n: Node): T = {
+    constructor.setComposer(new Composer(null, null) {
+      override def getSingleNode = n
+    })
+    constructor.getSingleData(manifest[T].erasure).asInstanceOf[T]
+  }
+
+  def dump(node: Node, output: java.io.Writer, rootTag: Tag = Tag.MAP) = {
+    val serializer = new Serializer(new Emitter(output, dumperOptions), resolver, dumperOptions, rootTag)
+    try {
+      serializer.open
+      serializer.serialize(node)
+      serializer.close
+    } catch {
+      case e: java.io.IOException => throw new YAMLException(e)
+    }
+  }
 }
