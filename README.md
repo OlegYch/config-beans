@@ -18,6 +18,7 @@ Plans
 ----------
 * Support Map
 * Support non-default constructors in case classes
+* Support comments
 * Gracefully handle modification of default parameters
 * Release to central
 * Support storages other than filesystem
