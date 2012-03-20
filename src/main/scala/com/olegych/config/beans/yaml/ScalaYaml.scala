@@ -1,7 +1,5 @@
 package com.olegych.config.beans.yaml
 
-import org.yaml.snakeyaml.constructor.{Construct, Constructor}
-import org.yaml.snakeyaml.nodes.{Tag, SequenceNode, Node, NodeId}
 import org.yaml.snakeyaml.{DumperOptions, Yaml}
 import org.yaml.snakeyaml.representer.{Represent, Representer}
 import org.yaml.snakeyaml.introspector.{BeanAccess, Property}
@@ -9,19 +7,31 @@ import collection.JavaConverters._
 import org.yaml.snakeyaml.composer.Composer
 import org.yaml.snakeyaml.serializer.Serializer
 import org.yaml.snakeyaml.emitter.Emitter
-import org.yaml.snakeyaml.error.YAMLException
+import org.yaml.snakeyaml.nodes._
+import org.yaml.snakeyaml.constructor.{AbstractConstruct, Construct, Constructor}
 
 /**
  */
 class ScalaYaml extends Yaml {
   constructor = new Constructor {
+    val defaultStrConstructor = yamlConstructors.get(Tag.STR)
+    yamlConstructors.put(Tag.STR, new AbstractConstruct {
+      def construct(node: Node) = {
+        val str = defaultStrConstructor.construct(node)
+        if (node.getType == classOf[Symbol]) {
+          Symbol(str.asInstanceOf[String])
+        } else {
+          str
+        }
+      }
+    })
     val defaultSeqConstruct = yamlClassConstructors.get(NodeId.sequence)
     yamlClassConstructors.put(NodeId.sequence, new Construct {
       def construct(node: Node) = {
         def default = defaultSeqConstruct.construct(node)
         node match {
           case sn: SequenceNode => def constructedSeq = constructSequence(sn).asScala
-          if (node.getType == classOf[List[_]]) {
+          if (classOf[Seq[_]].isAssignableFrom(node.getType)) {
             constructedSeq.toList
           } else {
             if (node.getType == classOf[Option[_]]) {
@@ -70,6 +80,10 @@ class ScalaYaml extends Yaml {
 
     put[Option[AnyRef]]
     put[Seq[AnyRef]]
+    representers.put(classOf[Symbol], new Represent {
+      def representData(data: AnyRef) = representScalar(org.yaml.snakeyaml.nodes.Tag.STR,
+        data.asInstanceOf[Symbol].name)
+    })
   }
 
   setBeanAccess(BeanAccess.FIELD)
@@ -81,14 +95,22 @@ class ScalaYaml extends Yaml {
     constructor.getSingleData(manifest[T].erasure).asInstanceOf[T]
   }
 
-  def dump(node: Node, output: java.io.Writer, rootTag: Tag = Tag.MAP) = {
-    val serializer = new Serializer(new Emitter(output, dumperOptions), resolver, dumperOptions, rootTag)
-    try {
-      serializer.open
-      serializer.serialize(node)
-      serializer.close
-    } catch {
-      case e: java.io.IOException => throw new YAMLException(e)
-    }
+  def dump(node: Node, output: java.io.Writer, rootTag: Tag) {
+    resource
+      .managed(new Serializer(new Emitter(output, dumperOptions), resolver, dumperOptions, rootTag))
+      .acquireAndGet {s => s.open(); s.serialize(node)}
   }
+
+  //  @tailrec final def traverse(d: Node, rest:Seq[Node] = Nil):Seq[Node] = {
+  //    (d match {
+  //      case m: MappingNode => m.getValue.asScala.flatMap(t => Seq(t.getKeyNode) ++ rest ++ traverse(t
+  // .getValueNode, rest))
+  //      case s: SequenceNode => s.getValue.asScala.flatMap(t => traverse(t, rest))
+  //      case other => Nil
+  //    }) ++ rest
+  //  }.map(n => {
+  //    val withValue = n.asInstanceOf[ {var value: String}]
+  ////    withValue.value = withValue.value + "-default"
+  //    n
+  //  } )
 }

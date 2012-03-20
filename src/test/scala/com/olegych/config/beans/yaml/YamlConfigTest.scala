@@ -21,17 +21,17 @@ class YamlConfigTest extends Specification {
     def custom: T
   }
 
-  def testWithHarness[T <: AnyRef](name: String, h: ConfigTestHarness[T]) = synchronized {
+  def testWithHarness[T <: AnyRef](name: String, h: ConfigTestHarness[T]) = {
     name should {
       import h._
-      "parse default " in {
+      "parse default " in h.synchronized {
         default mustEqual config.default
       }
-      "accept modification" in {
+      "accept modification" in h.synchronized {
         config.value = default
         default mustEqual config.value
       }
-      "save custom value from saved " in {
+      "save custom value from saved " in h.synchronized {
         config.value = custom
         custom mustEqual config.value
       }
