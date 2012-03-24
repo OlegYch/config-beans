@@ -41,11 +41,13 @@
         <XML>
           <option name="XML_LEGACY_SETTINGS_IMPORTED" value="true" />
         </XML>
-        <ADDITIONAL_INDENT_OPTIONS fileType="gsp">
-          <option name="INDENT_SIZE" value="2" />
-        </ADDITIONAL_INDENT_OPTIONS>
         <codeStyleSettings language="CSS">
           <option name="PARENT_SETTINGS_INSTALLED" value="true" />
+        </codeStyleSettings>
+        <codeStyleSettings language="GSP">
+          <indentOptions>
+            <option name="INDENT_SIZE" value="2" />
+          </indentOptions>
         </codeStyleSettings>
         <codeStyleSettings language="Groovy">
           <option name="CALL_PARAMETERS_WRAP" value="1" />

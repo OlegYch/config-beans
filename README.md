@@ -18,12 +18,14 @@ Plans
 ----------
 * Support Map
 * Support non-default constructors in case classes
-* Support comments
-* Gracefully handle modification of default parameters
 * Release to central
+* Gracefully handle modification of default parameters
+* Support samples for collection values which are empty by default
+* Support comments
 * Support storages other than filesystem
 * Integrate https://github.com/typesafehub/config
 * Support substitution
+* Support inclusion
 * Support storage formats other than yaml
 
 Sample
