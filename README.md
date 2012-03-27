@@ -22,6 +22,8 @@ Plans
 * Gracefully handle modification of default parameters
 * Support samples for collection values which are empty by default
 * Support comments
+* Support validation callbacks
+* Support reload callbacks
 * Support storages other than filesystem
 * Integrate https://github.com/typesafehub/config
 * Support substitution
