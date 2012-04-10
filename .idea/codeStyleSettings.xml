@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectCodeStyleSettingsManager">
     <option name="PER_PROJECT_SETTINGS">
-      <value>
+      <value enabled="true">
         <option name="OTHER_INDENT_OPTIONS">
           <value>
             <option name="INDENT_SIZE" value="2" />
@@ -38,6 +38,19 @@
         <option name="PARAMETER_ANNOTATION_WRAP" value="1" />
         <option name="VARIABLE_ANNOTATION_WRAP" value="1" />
         <option name="ENUM_CONSTANTS_WRAP" value="1" />
+        <option name="KEYWORD_CASE" value="lower" />
+        <option name="FUNCTION_CASE" value="lower" />
+        <option name="PARAMETER_CASE" value="lower" />
+        <option name="DATATYPE_CASE" value="lower" />
+        <option name="OBJECT_CASE" value="upper" />
+        <option name="KEYWORD_CASE" value="lower" />
+        <option name="FUNCTION_CASE" value="lower" />
+        <option name="PARAMETER_CASE" value="lower" />
+        <option name="DATATYPE_CASE" value="lower" />
+        <option name="OBJECT_CASE" value="upper" />
+        <option name="STATEMENT_SPACING" value="one_line" />
+        <option name="CLAUSE_CHOP_DOWN" value="chop_down_if_statement_long" />
+        <option name="ITERATION_ELEMENTS_WRAPPING" value="chop_down_if_not_single" />
         <XML>
           <option name="XML_LEGACY_SETTINGS_IMPORTED" value="true" />
         </XML>
