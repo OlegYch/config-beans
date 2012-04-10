@@ -9,6 +9,7 @@ import org.yaml.snakeyaml.serializer.Serializer
 import org.yaml.snakeyaml.emitter.Emitter
 import org.yaml.snakeyaml.nodes._
 import org.yaml.snakeyaml.constructor.{AbstractConstruct, Construct, Constructor}
+import collection.immutable.ListMap
 
 /**
  */
@@ -25,8 +26,9 @@ class ScalaYaml extends Yaml {
         }
       }
     })
-    val defaultSeqConstruct = yamlClassConstructors.get(NodeId.sequence)
     yamlClassConstructors.put(NodeId.sequence, new Construct {
+      val defaultSeqConstruct = yamlClassConstructors.get(NodeId.sequence)
+
       def construct(node: Node) = {
         def default = defaultSeqConstruct.construct(node)
         node match {
@@ -46,6 +48,25 @@ class ScalaYaml extends Yaml {
 
       def construct2ndStep(node: Node, `object`: AnyRef) {
         defaultSeqConstruct.construct2ndStep(node, `object`)
+      }
+    })
+    yamlClassConstructors.put(NodeId.mapping, new Construct {
+      val defaultMapConstruct = yamlClassConstructors.get(NodeId.mapping)
+
+      def construct(node: Node) = {
+        def default = defaultMapConstruct.construct(node)
+        node match {
+          case mn: MappingNode => if (classOf[Map[_, _]].isAssignableFrom(node.getType)) {
+            ListMap.empty ++ constructMapping(mn).asScala
+          } else {
+            default
+          }
+          case _ => default
+        }
+      }
+
+      def construct2ndStep(node: Node, `object`: AnyRef) {
+        defaultMapConstruct.construct2ndStep(node, `object`)
       }
     })
   }
@@ -83,6 +104,10 @@ class ScalaYaml extends Yaml {
     representers.put(classOf[Symbol], new Represent {
       def representData(data: AnyRef) = representScalar(org.yaml.snakeyaml.nodes.Tag.STR,
         data.asInstanceOf[Symbol].name)
+    })
+    multiRepresenters.put(classOf[Map[_, _]], new Represent {
+      def representData(data: AnyRef) = representMapping(org.yaml.snakeyaml.nodes.Tag.MAP,
+        data.asInstanceOf[Map[AnyRef, AnyRef]].asJava, null)
     })
   }
 
